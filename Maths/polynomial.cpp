@@ -10,12 +10,29 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-inline bool Polynomial<T>::operator==(const Polynomial<T>& polynomial) const {
-    return this->align().coefficients == polynomial.align().coefficients;
+Polynomial<T>::Polynomial() {
+    this->field = &fields::empty_field;
+    this->coefficients = vector<T>();
 }
 
 template <typename T>
-inline bool Polynomial<T>::operator!=(const Polynomial<T>& polynomial) const {
+Polynomial<T>::Polynomial(Field* field, vector<T> coefficients) {
+    for (int i = 0; i < coefficients.size(); i ++) {
+        if (*field != *coefficients[i].field) throw "ERROR 0426";
+    }
+    this->field = field;
+    this->coefficients = coefficients;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+bool Polynomial<T>::operator==(const Polynomial<T>& polynomial) const {
+    return *this->field == *polynomial.field && this->align().coefficients == polynomial.align().coefficients;
+}
+
+template <typename T>
+bool Polynomial<T>::operator!=(const Polynomial<T>& polynomial) const {
     return !(*this == polynomial);
 }
 
@@ -24,63 +41,78 @@ inline bool Polynomial<T>::operator!=(const Polynomial<T>& polynomial) const {
 template <typename T>
 Polynomial<T> Polynomial<T>::operator-() const {
     int new_degree = this->degree();
-    vector<T> new_coefficients(new_degree + 1, T(this->coefficients[0].field));
+    vector<T> new_coefficients(new_degree + 1, T(this->field));
     for (int i = 0; i <= new_degree; i ++) {
         new_coefficients[i] = -this->coefficients[i];
     }
-    return Polynomial<T>(new_coefficients);
+    return Polynomial<T>(this->field, new_coefficients);
+}
+
+template <typename T>
+Polynomial<T> Polynomial<T>::operator*(T scalar) const {
+    if (this->field != scalar.field) throw "ERROR 4639";
+    int new_degree = this->degree();
+    vector<T> new_coefficients(new_degree + 1, T(this->field));
+    for (int i = 0; i <= new_degree; i ++) {
+        new_coefficients[i] = this->coefficients[i] * scalar;
+    }
+    return Polynomial<T>(this->field, new_coefficients);
 }
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator+(const Polynomial<T>& polynomial) const {
+    if (this->field != polynomial.field) throw "ERROR 8814";
     int new_degree = max(this->degree(), polynomial.degree());
     Polynomial<T> temp_0_polynomial = this->redegree(new_degree);
     Polynomial<T> temp_1_polynomial = polynomial.redegree(new_degree);
-    vector<T> new_coefficients(new_degree + 1, T(this->coefficients[0].field));
+    vector<T> new_coefficients(new_degree + 1, T(this->field));
     for (int i = 0; i <= new_degree; i ++) {
         new_coefficients[i] = temp_0_polynomial.coefficients[i] + temp_1_polynomial.coefficients[i];
     }
-    return Polynomial<T>(new_coefficients);
+    return Polynomial<T>(this->field, new_coefficients);
 }
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator-(const Polynomial<T>& polynomial) const {
+    if (this->field != polynomial.field) throw "ERROR 1403";
     return (*this) + (-polynomial);
 }
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator*(const Polynomial<T>& polynomial) const {
+    if (this->field != polynomial.field) throw "ERROR 2944";
     int new_degree = this->degree() + polynomial.degree();
     Polynomial<T> temp_0_polynomial = this->align();
     Polynomial<T> temp_1_polynomial = polynomial.align();
-    vector<T> new_coefficients(new_degree + 1, T(this->coefficients[0].field));
+    vector<T> new_coefficients(new_degree + 1, T(this->field));
     for (int i = 0; i <= temp_0_polynomial.degree(); i ++) {
         for (int j = 0; j <= temp_1_polynomial.degree(); j ++) {
             new_coefficients[i + j] = new_coefficients[i + j] + (temp_0_polynomial.coefficients[i] * temp_1_polynomial.coefficients[j]);
         }
     }
-    return Polynomial<T>(new_coefficients);
+    return Polynomial<T>(this->field, new_coefficients);
 }
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator/(const Polynomial<T>& polynomial) const {
+    if (this->field != polynomial.field) throw "ERROR 0652";
     int new_degree = this->degree() - polynomial.degree();
-    if (new_degree < 0) return Polynomial<T>({this->coefficients[0].field});
+    if (new_degree < 0) return Polynomial<T>(this->field, {this->field});
     Polynomial<T> temp_0_polynomial = this->align();
     Polynomial<T> temp_1_polynomial = polynomial.align();
-    vector<T> new_coefficients(new_degree + 1, T(this->coefficients[0].field));
+    vector<T> new_coefficients(new_degree + 1, T(this->field));
     for (int i = 0; i <= new_degree; i ++) {
         new_coefficients[new_degree - i] = temp_0_polynomial.coefficients[this->degree() - i] / temp_1_polynomial.coefficients[temp_1_polynomial.degree()];
-        temp_0_polynomial = *this + (temp_1_polynomial * Polynomial<T>(new_coefficients));
+        temp_0_polynomial = *this + (temp_1_polynomial * Polynomial<T>(this->field, new_coefficients));
     }
-    return Polynomial<T>(new_coefficients);
+    return Polynomial<T>(this->field, new_coefficients);
 }
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator%(const Polynomial<T>& polynomial) const {
+    if (this->field != polynomial.field) throw "ERROR 7336";
     int new_degree = polynomial.degree() - 1;
-    if (new_degree < 0) return Polynomial<T>({this->coefficients[0].field});
-    Polynomial<T> tambaytamba = *this / polynomial;
+    if (new_degree < 0) return Polynomial<T>(this->field, {this->field});
     return (*this - (polynomial * (*this / polynomial))).redegree(new_degree);
 }
 
@@ -89,7 +121,7 @@ Polynomial<T> Polynomial<T>::operator%(const Polynomial<T>& polynomial) const {
 template <typename T>
 int Polynomial<T>::degree() const {
     for (int i = 0; i < this->coefficients.size(); i ++) {
-        if (this->coefficients[this->coefficients.size() - i - 1] != T(this->coefficients[0].field)) {
+        if (this->coefficients[this->coefficients.size() - i - 1] != T(this->field)) {
             return this->coefficients.size() - i - 1;
         }
     }
@@ -98,20 +130,22 @@ int Polynomial<T>::degree() const {
 
 template <typename T>
 Polynomial<T> Polynomial<T>::redegree(int degree) const {
-    vector<T> new_coefficients(degree + 1, T(this->coefficients[0].field));
+    if (degree < 0) throw "ERROR 9219";
+    vector<T> new_coefficients(degree + 1, T(this->field));
     for (int i = 0; i <= min(degree, this->degree()); i ++) {
         new_coefficients[i] = this->coefficients[i];
     }
-    return Polynomial<T>(new_coefficients);
+    return Polynomial<T>(this->field, new_coefficients);
 }
 
 template <typename T>
-inline Polynomial<T> Polynomial<T>::align() const {
+Polynomial<T> Polynomial<T>::align() const {
     return this->redegree(this->degree());
 }
 
 template <typename T>
 T Polynomial<T>::evaluate(T argument) const {
+    if (this->field != argument.field) throw "ERROR 3842";
     T temp_0_value = this->coefficients[0];
     for (int i = 0; i < this->degree(); i ++) {
         T temp_1_value = this->coefficients[i + 1];

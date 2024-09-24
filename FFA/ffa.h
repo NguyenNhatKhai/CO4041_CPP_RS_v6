@@ -13,11 +13,12 @@
 #include <string>
 #include <vector>
 
-#include "../Maths/maths.h"
-
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+class Polynomial;
 
 class Binary;
 class Element;
@@ -31,19 +32,19 @@ class Field {
     vector<Element> general_elements;
 
     public:
-    Field() : primitive_polynomial(&polynomials::empty_polynomial<Binary>), general_elements(vector<Element>()) {}
+    Field();
     Field(Polynomial<Binary>* primitive_polynomial);
     ~Field() = default;
 
     public:
-    inline bool operator==(const Field& field) const;
-    inline bool operator!=(const Field& field) const;
+    bool operator==(const Field& field) const;
+    bool operator!=(const Field& field) const;
 
     public:
-    inline int size() const;
-    inline Element zero_element() const;
-    inline Element unit_element() const;
-    inline Element primitive_element() const;
+    int size() const;
+    Element zero_element() const;
+    Element unit_element() const;
+    Element primitive_element() const;
 };
 
 namespace fields {
@@ -59,19 +60,21 @@ class Binary {
 
     public:
     Binary() = delete;
-    Binary(Field* field) : field(&fields::empty_field), value(false) {}
-    Binary(bool value) : field(&fields::empty_field), value(value) {}
+    Binary(Field* field);
+    Binary(bool value);
     ~Binary() = default;
 
     public:
-    inline bool operator==(const Binary& binary) const;
-    inline bool operator!=(const Binary& binary) const;
-    inline Binary operator-() const;
-    inline Binary operator~() const;
-    inline Binary operator+(const Binary& binary) const;
-    inline Binary operator-(const Binary& binary) const;
-    inline Binary operator*(const Binary& binary) const;
-    inline Binary operator/(const Binary& binary) const;
+    bool operator==(const Binary& binary) const;
+    bool operator!=(const Binary& binary) const;
+
+    public:
+    Binary operator-() const;
+    Binary operator~() const;
+    Binary operator+(const Binary& binary) const;
+    Binary operator-(const Binary& binary) const;
+    Binary operator*(const Binary& binary) const;
+    Binary operator/(const Binary& binary) const;
 };
 
 ostream& operator<<(ostream& output, const Binary& binary);
@@ -85,13 +88,15 @@ class Element {
 
     public:
     Element() = delete;
-    Element(Field* field) : field(field), values(field->zero_element().values) {}
-    Element(Field* field, vector<Binary> values) : field(field), values(values) {}
+    Element(Field* field);
+    Element(Field* field, vector<Binary> values);
     ~Element() = default;
 
     public:
-    inline bool operator==(const Element& element) const;
-    inline bool operator!=(const Element& element) const;
+    bool operator==(const Element& element) const;
+    bool operator!=(const Element& element) const;
+
+    public:
     Element operator-() const;
     Element operator~() const;
     Element operator+(const Element& element) const;
@@ -100,7 +105,7 @@ class Element {
     Element operator/(const Element& element) const;
 
     public:
-    inline int degree() const;
+    int degree() const;
 };
 
 template <typename T>
@@ -108,6 +113,7 @@ ostream& operator<<(ostream& output, const Element& element);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../Maths/maths.h"
 #include "binary.cpp"
 #include "element.cpp"
 #include "field.cpp"

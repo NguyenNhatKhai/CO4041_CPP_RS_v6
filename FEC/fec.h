@@ -30,8 +30,9 @@ class RS {
 
     public:
     RS() = delete;
-    RS(const Polynomial<Binary>& primitive_polynomial, int correction_capability);
-    ~RS();
+    // RS(const Polynomial<Binary>& primitive_polynomial, int correction_capability);
+    RS(Field* symbol_field, int correction_capability);
+    ~RS() = default;
 
     public:
     inline int codeword_length() const;

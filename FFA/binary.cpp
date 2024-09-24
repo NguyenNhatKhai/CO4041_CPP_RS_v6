@@ -7,38 +7,56 @@
 
 #include "ffa.h"
 
-inline bool Binary::operator==(const Binary& binary) const {
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Binary::Binary(Field* field) {
+    this->field = &fields::empty_field;
+    this->value = false;
+}
+
+Binary::Binary(bool value) {
+    this->field = &fields::empty_field;
+    this->value = value;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool Binary::operator==(const Binary& binary) const {
     return this->value == binary.value;
 }
 
-inline bool Binary::operator!=(const Binary& binary) const {
+bool Binary::operator!=(const Binary& binary) const {
     return !(*this == binary);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Binary Binary::operator-() const {
+Binary Binary::operator-() const {
     return Binary(this->value);
 }
 
-inline Binary Binary::operator~() const {
-    if (this->value == 0) throw "ERROR";
+Binary Binary::operator~() const {
+    if (this->value == 0) throw "ERROR 6274";
     return Binary(this->value);
 }
 
-inline Binary Binary::operator+(const Binary& binary) const {
+Binary Binary::operator+(const Binary& binary) const {
+    if (*this->field != *binary.field) throw "ERROR 8333";
     return Binary(this->value ^ binary.value);
 }
 
-inline Binary Binary::operator-(const Binary& binary) const {
+Binary Binary::operator-(const Binary& binary) const {
+    if (*this->field != *binary.field) throw "ERROR 4131";
     return (*this) + (-binary);
 }
 
-inline Binary Binary::operator*(const Binary& binary) const {
+Binary Binary::operator*(const Binary& binary) const {
+    if (*this->field != *binary.field) throw "ERROR 1720";
     return Binary(this->value & binary.value);
 }
 
-inline Binary Binary::operator/(const Binary& binary) const {
+Binary Binary::operator/(const Binary& binary) const {
+    if (*this->field != *binary.field) throw "ERROR 9526";
     return (*this) * (~binary);
 }
 

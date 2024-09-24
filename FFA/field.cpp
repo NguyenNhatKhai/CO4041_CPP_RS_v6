@@ -9,6 +9,11 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+Field::Field() {
+    this->primitive_polynomial = &polynomials::empty_polynomial<Binary>;
+    this->general_elements = vector<Element>();
+}
+
 Field::Field(Polynomial<Binary>* primitive_polynomial) {
     this->primitive_polynomial = primitive_polynomial;
     this->general_elements = vector<Element>(this->size() - 1, Element(const_cast<Field*>(this), vector<Binary>(primitive_polynomial->degree(), Binary(false))));
@@ -23,29 +28,29 @@ Field::Field(Polynomial<Binary>* primitive_polynomial) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline bool Field::operator==(const Field& field) const {
+bool Field::operator==(const Field& field) const {
     return this->primitive_polynomial == field.primitive_polynomial;
 }
 
-inline bool Field::operator!=(const Field& field) const {
+bool Field::operator!=(const Field& field) const {
     return !(*this == field);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline int Field::size() const {
+int Field::size() const {
     return pow(2, this->primitive_polynomial->degree());
 }
 
-inline Element Field::zero_element() const {
+Element Field::zero_element() const {
     return Element(const_cast<Field*>(this), vector<Binary>(this->primitive_polynomial->degree(), Binary(false)));
 }
 
-inline Element Field::unit_element() const {
+Element Field::unit_element() const {
     return this->general_elements[0];
 }
 
-inline Element Field::primitive_element() const {
+Element Field::primitive_element() const {
     return this->general_elements[1];
 }
 

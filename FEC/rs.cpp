@@ -9,17 +9,27 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-RS::RS(const Polynomial<Binary>& primitive_polynomial, int correction_capability) {
-    this->symbol_field = new Field(const_cast<Polynomial<Binary>*>(&primitive_polynomial));
-    this->generator_polynomial = Polynomial<Element>({this->symbol_field->unit_element()});
+// RS::RS(const Polynomial<Binary>& primitive_polynomial, int correction_capability) {
+//     this->symbol_field = new Field(const_cast<Polynomial<Binary>*>(&primitive_polynomial));
+//     this->generator_polynomial = Polynomial<Element>(this->symbol_field, {this->symbol_field->unit_element()});
+//     for (int i = 0; i < 2 * correction_capability; i ++) {
+//         this->generator_polynomial = this->generator_polynomial * Polynomial<Element>(this->symbol_field, {this->symbol_field->general_elements[i + 1], this->symbol_field->unit_element()});
+//     }
+// }
+
+RS::RS(Field* symbol_field, int correction_capability) {
+    if (correction_capability <= 0 || 2 * correction_capability >= symbol_field->size() - 1) throw "ERROR 8690";
+    this->symbol_field = symbol_field;
+    this->generator_polynomial = Polynomial<Element>(this->symbol_field, {this->symbol_field->unit_element()});
     for (int i = 0; i < 2 * correction_capability; i ++) {
-        this->generator_polynomial = this->generator_polynomial * Polynomial<Element>({this->symbol_field->general_elements[i + 1], this->symbol_field->unit_element()});
+        this->generator_polynomial = this->generator_polynomial * Polynomial<Element>(this->symbol_field, {this->symbol_field->general_elements[i + 1], this->symbol_field->unit_element()});
     }
 }
 
-RS::~RS() {
-    delete this->symbol_field;
-}
+
+// RS::~RS() {
+//     delete this->symbol_field;
+// }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,18 +52,21 @@ inline int RS::symbol_size() const {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Polynomial<Element> RS::systematic_encode(const Polynomial<Element>& message) const {
-    Polynomial<Element> temp_0_polynomial(vector<Element>(this->parity_length() + 1, this->symbol_field->zero_element()));
+    if (message.coefficients.size() != this->message_length()) throw "ERROR 3233";
+    Polynomial<Element> temp_0_polynomial(this->symbol_field, vector<Element>(this->parity_length() + 1, this->symbol_field->zero_element()));
     temp_0_polynomial.coefficients[this->parity_length()] = this->symbol_field->unit_element();
     return ((message * temp_0_polynomial) + ((message * temp_0_polynomial) % this->generator_polynomial)).redegree(this->codeword_length() - 1);
 }
 
 Polynomial<Element> RS::nonsystematic_encode(const Polynomial<Element>& message) const {
+    if (message.coefficients.size() != this->message_length()) throw "ERROR 4410";
     return (message * this->generator_polynomial).redegree(this->codeword_length() - 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 vector<Element> RS::syndrome_calculate(const Polynomial<Element>& received) const {
+    if (received.coefficients.size() != this->codeword_length()) throw "ERROR 5824";
     vector<Element> temp_0_elements(this->parity_length(), this->symbol_field->zero_element());
     for (int i = 0; i < temp_0_elements.size(); i ++) {
         temp_0_elements[i] = received.evaluate(this->symbol_field->general_elements[i + 1]);
