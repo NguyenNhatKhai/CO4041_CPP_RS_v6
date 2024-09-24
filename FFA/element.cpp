@@ -65,7 +65,7 @@ inline int Element::degree() const {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ostream& operator<<(ostream& output, const Element& element) {
-    output << "{";
+    output << "'{";
     for (int i = 0; i < element.values.size(); i ++) {
         output << element.values[i];
         if (i != element.values.size() - 1) {

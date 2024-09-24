@@ -32,6 +32,16 @@ Polynomial<T> Polynomial<T>::operator-() const {
 }
 
 template <typename T>
+Polynomial<T> Polynomial<T>::operator*(T scalar) const {
+    int new_degree = this->degree();
+    vector<T> new_coefficients(new_degree + 1, T(this->coefficients[0].field));
+    for (int i = 0; i <= new_degree; i ++) {
+        new_coefficients[i] = this->coefficients[i] * scalar;
+    }
+    return Polynomial<T>(new_coefficients);
+}
+
+template <typename T>
 Polynomial<T> Polynomial<T>::operator+(const Polynomial<T>& polynomial) const {
     int new_degree = max(this->degree(), polynomial.degree());
     Polynomial<T> temp_0_polynomial = this->redegree(new_degree);
@@ -127,7 +137,7 @@ T Polynomial<T>::evaluate(T argument) const {
 
 template <typename T>
 ostream& operator<<(ostream& output, const Polynomial<T>& polynomial) {
-    output << "{";
+    output << "'{";
     for (int i = 0; i < polynomial.coefficients.size(); i ++) {
         output << polynomial.coefficients[i];
         if (i != polynomial.coefficients.size() - 1) {

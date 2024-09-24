@@ -37,5 +37,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
+    try {
+        Binary bin0(false);
+        Binary bin1(true);
+        Matrix<Binary> mat0({{bin0, bin0}, {bin1, bin1}});
+        Matrix<Binary> mat1({{bin1, bin1}, {bin0, bin1}});
+        Matrix<Binary> mat2 = mat0 + mat1;
+        cout << mat2 << endl;
+    } catch (const char* error_message) {
+        cout << error_message << endl;
+    }
     return 0;
 }
