@@ -53,6 +53,7 @@ class Polynomial {
     Polynomial<T> redegree(int degree) const;
     Polynomial<T> align() const;
     T evaluate(T argument) const;
+    Polynomial<T> derivative() const;
 };
 
 template <typename T>

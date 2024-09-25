@@ -41,22 +41,22 @@ Binary Binary::operator~() const {
 }
 
 Binary Binary::operator+(const Binary& binary) const {
-    if (*this->field != *binary.field) throw "ERROR 8333";
+    if (*binary.field != *this->field) throw "ERROR 8333";
     return Binary(this->value ^ binary.value);
 }
 
 Binary Binary::operator-(const Binary& binary) const {
-    if (*this->field != *binary.field) throw "ERROR 4131";
+    if (*binary.field != *this->field) throw "ERROR 4131";
     return (*this) + (-binary);
 }
 
 Binary Binary::operator*(const Binary& binary) const {
-    if (*this->field != *binary.field) throw "ERROR 1720";
+    if (*binary.field != *this->field) throw "ERROR 1720";
     return Binary(this->value & binary.value);
 }
 
 Binary Binary::operator/(const Binary& binary) const {
-    if (*this->field != *binary.field) throw "ERROR 9526";
+    if (*binary.field != *this->field) throw "ERROR 9526";
     return (*this) * (~binary);
 }
 

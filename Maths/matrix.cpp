@@ -18,11 +18,11 @@ Matrix<T>::Matrix() {
 template <typename T>
 Matrix<T>::Matrix(Field* field, vector<vector<T>> elements) {
     for (int i = 1; i < elements.size(); i ++) {
-        if (elements[0].size() != elements[i].size()) throw "ERROR 2756";
+        if (elements[i].size() != elements[0].size()) throw "ERROR 2756";
     }
     for (int i = 0; i < elements.size(); i ++) {
         for (int j = 0; j < elements[0].size(); j ++) {
-            if (*field != *elements[i][j].field) throw "ERROR 0534";
+            if (*elements[i][j].field != *field) throw "ERROR 0534";
         }
     }
     this->field = field;
@@ -97,7 +97,7 @@ Matrix<T> Matrix<T>::operator~() const {
 
 template <typename T>
 Matrix<T> Matrix<T>::operator*(T scalar) const {
-    if (this->field != scalar.field) throw "ERROR 4921";
+    if (*scalar.field != *this->field) throw "ERROR 4921";
     int new_row = this->row();
     int new_column = this->column();
     vector<vector<T>> new_elements(new_row, vector<T>(new_column, T(this->field)));
@@ -111,7 +111,7 @@ Matrix<T> Matrix<T>::operator*(T scalar) const {
 
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix<T>& matrix) const {
-    if (this->field != matrix.field) throw "ERROR 7004";
+    if (*matrix.field != *this->field) throw "ERROR 7004";
     if (this->row() != matrix.row() || this->column() != matrix.column()) throw "ERROR 4496";
     int new_row = this->row();
     int new_column = this->column();
@@ -126,13 +126,13 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T>& matrix) const {
 
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix<T>& matrix) const {
-    if (this->field != matrix.field) throw "ERROR 4825";
+    if (*matrix.field != *this->field) throw "ERROR 4825";
     return (*this) + (-matrix);
 }
 
 template <typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T>& matrix) const {
-    if (this->field != matrix.field) throw "ERROR 6520";
+    if (*matrix.field != *this->field) throw "ERROR 6520";
     if (this->column() != matrix.row()) throw "ERROR 5853";
     int new_row = this->row();
     int new_column = matrix.column();
@@ -149,7 +149,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& matrix) const {
 
 template <typename T>
 Matrix<T> Matrix<T>::operator/(const Matrix<T>& matrix) const {
-    if (this->field != matrix.field) throw "ERROR 1582";
+    if (*matrix.field != *this->field) throw "ERROR 1582";
     return (*this) * (~matrix);
 }
 

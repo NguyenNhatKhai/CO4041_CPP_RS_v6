@@ -15,7 +15,7 @@ Element::Element(Field* field) {
 }
 
 Element::Element(Field* field, vector<Binary> values) {
-    if (field->primitive_polynomial->degree() != values.size()) throw "ERROR 6178";
+    if (values.size() != field->primitive_polynomial->degree()) throw "ERROR 6178";
     this->field = field;
     this->values = values;
 }
@@ -47,7 +47,7 @@ Element Element::operator~() const {
 }
 
 Element Element::operator+(const Element& element) const {
-    if (*this->field != *element.field) throw "ERROR 9281";
+    if (*element.field != *this->field) throw "ERROR 9281";
     Polynomial<Binary> temp_0_polynomial(&fields::empty_field, this->values);
     Polynomial<Binary> temp_1_polynomial(&fields::empty_field, element.values);
     vector<Binary> temp_2_values = (temp_0_polynomial + temp_1_polynomial).redegree(this->degree()).coefficients;
@@ -55,12 +55,12 @@ Element Element::operator+(const Element& element) const {
 }
 
 Element Element::operator-(const Element& element) const {
-    if (*this->field != *element.field) throw "ERROR 9515";
+    if (*element.field != *this->field) throw "ERROR 9515";
     return (*this) + (-element);
 }
 
 Element Element::operator*(const Element& element) const {
-    if (*this->field != *element.field) throw "ERROR 4480";
+    if (*element.field != *this->field) throw "ERROR 4480";
     Polynomial<Binary> temp_0_polynomial(&fields::empty_field, this->values);
     Polynomial<Binary> temp_1_polynomial(&fields::empty_field, element.values);
     vector<Binary> temp_2_values = (temp_0_polynomial * temp_1_polynomial % *this->field->primitive_polynomial).coefficients;
@@ -68,7 +68,7 @@ Element Element::operator*(const Element& element) const {
 }
 
 Element Element::operator/(const Element& element) const {
-    if (*this->field != *element.field) throw "ERROR 9857";
+    if (*element.field != *this->field) throw "ERROR 9857";
     return (*this) * (~element);
 }
 

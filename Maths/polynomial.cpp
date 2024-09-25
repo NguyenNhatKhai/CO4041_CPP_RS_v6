@@ -18,7 +18,7 @@ Polynomial<T>::Polynomial() {
 template <typename T>
 Polynomial<T>::Polynomial(Field* field, vector<T> coefficients) {
     for (int i = 0; i < coefficients.size(); i ++) {
-        if (*field != *coefficients[i].field) throw "ERROR 0426";
+        if (*coefficients[i].field != *field) throw "ERROR 0426";
     }
     this->field = field;
     this->coefficients = coefficients;
@@ -50,7 +50,7 @@ Polynomial<T> Polynomial<T>::operator-() const {
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator*(T scalar) const {
-    if (this->field != scalar.field) throw "ERROR 4639";
+    if (scalar.field != this->field) throw "ERROR 4639";
     int new_degree = this->degree();
     vector<T> new_coefficients(new_degree + 1, T(this->field));
     for (int i = 0; i <= new_degree; i ++) {
@@ -61,7 +61,7 @@ Polynomial<T> Polynomial<T>::operator*(T scalar) const {
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator+(const Polynomial<T>& polynomial) const {
-    if (this->field != polynomial.field) throw "ERROR 8814";
+    if (polynomial.field != this->field) throw "ERROR 8814";
     int new_degree = max(this->degree(), polynomial.degree());
     Polynomial<T> temp_0_polynomial = this->redegree(new_degree);
     Polynomial<T> temp_1_polynomial = polynomial.redegree(new_degree);
@@ -74,13 +74,13 @@ Polynomial<T> Polynomial<T>::operator+(const Polynomial<T>& polynomial) const {
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator-(const Polynomial<T>& polynomial) const {
-    if (this->field != polynomial.field) throw "ERROR 1403";
+    if (polynomial.field != this->field) throw "ERROR 1403";
     return (*this) + (-polynomial);
 }
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator*(const Polynomial<T>& polynomial) const {
-    if (this->field != polynomial.field) throw "ERROR 2944";
+    if (polynomial.field != this->field) throw "ERROR 2944";
     int new_degree = this->degree() + polynomial.degree();
     Polynomial<T> temp_0_polynomial = this->align();
     Polynomial<T> temp_1_polynomial = polynomial.align();
@@ -95,7 +95,7 @@ Polynomial<T> Polynomial<T>::operator*(const Polynomial<T>& polynomial) const {
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator/(const Polynomial<T>& polynomial) const {
-    if (this->field != polynomial.field) throw "ERROR 0652";
+    if (polynomial.field != this->field) throw "ERROR 0652";
     int new_degree = this->degree() - polynomial.degree();
     if (new_degree < 0) return Polynomial<T>(this->field, {this->field});
     Polynomial<T> temp_0_polynomial = this->align();
@@ -110,7 +110,7 @@ Polynomial<T> Polynomial<T>::operator/(const Polynomial<T>& polynomial) const {
 
 template <typename T>
 Polynomial<T> Polynomial<T>::operator%(const Polynomial<T>& polynomial) const {
-    if (this->field != polynomial.field) throw "ERROR 7336";
+    if (polynomial.field != this->field) throw "ERROR 7336";
     int new_degree = polynomial.degree() - 1;
     if (new_degree < 0) return Polynomial<T>(this->field, {this->field});
     return (*this - (polynomial * (*this / polynomial))).redegree(new_degree);
@@ -145,7 +145,7 @@ Polynomial<T> Polynomial<T>::align() const {
 
 template <typename T>
 T Polynomial<T>::evaluate(T argument) const {
-    if (this->field != argument.field) throw "ERROR 3842";
+    if (argument.field != this->field) throw "ERROR 3842";
     T temp_0_value = this->coefficients[0];
     for (int i = 0; i < this->degree(); i ++) {
         T temp_1_value = this->coefficients[i + 1];
@@ -155,6 +155,19 @@ T Polynomial<T>::evaluate(T argument) const {
         temp_0_value = temp_0_value + temp_1_value;
     }
     return temp_0_value;
+}
+
+template <typename T>
+Polynomial<T> Polynomial<T>::derivative() const {
+    int new_degree = this->degree() - 1;
+    vector<T> new_coefficients(new_degree + 1, T(this->field));
+    for (int i = 0; i <= new_degree; i ++) {
+        new_coefficients[i] = this->coefficients[i + 1];
+        for (int j = 0; j < i; j ++) {
+            new_coefficients[i] = new_coefficients[i] + this->coefficients[i + 1];
+        }
+    }
+    return Polynomial<T>(this->field, new_coefficients);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

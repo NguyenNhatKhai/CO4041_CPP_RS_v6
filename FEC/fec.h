@@ -30,22 +30,34 @@ class RS {
 
     public:
     RS() = delete;
-    // RS(const Polynomial<Binary>& primitive_polynomial, int correction_capability);
     RS(Field* symbol_field, int correction_capability);
     ~RS() = default;
 
     public:
-    inline int codeword_length() const;
-    inline int message_length() const;
-    inline int parity_length() const;
-    inline int symbol_size() const;
+    int codeword_length() const;
+    int message_length() const;
+    int parity_length() const;
+    int symbol_size() const;
+    int detection_capability() const;
+    int correction_capability() const;
 
     public:
     Polynomial<Element> systematic_encode(const Polynomial<Element>& message) const;
     Polynomial<Element> nonsystematic_encode(const Polynomial<Element>& message) const;
 
     public:
-    vector<Element> syndrome_calculate(const Polynomial<Element>& received) const;
+    vector<Element> syndrome(const Polynomial<Element>& received) const;
+    Polynomial<Element> syndrome(const vector<Element>& syndrome);
+    Polynomial<Element> pgz_error_locator(const vector<Element>& syndrome);
+    Polynomial<Element> pgz_error_evaluator(const Polynomial<Element>& syndrome, const Polynomial<Element>& error_locator);
+    vector<Element> chien_roots(const Polynomial<Element>& error_locator);
+    vector<Element> pgz_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots);
+    Polynomial<Element> estimated_error(const vector<Element>& roots, const vector<Element>& error_values);
+    Polynomial<Element> estimated_codeword(const Polynomial<Element>& received, const Polynomial<Element>& estimated_error);
+    Polynomial<Element> estimated_message(const Polynomial<Element>& estimated_codeword);
+    
+    public:
+    Polynomial<Element> pgz_decode(const Polynomial<Element>& received) const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
