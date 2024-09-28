@@ -8,6 +8,8 @@
 #ifndef _FEC_H_
 #define _FEC_H_
 
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -42,22 +44,38 @@ class RS {
     int correction_capability() const;
 
     public:
-    Polynomial<Element> systematic_encode(const Polynomial<Element>& message) const;
-    Polynomial<Element> nonsystematic_encode(const Polynomial<Element>& message) const;
+    Polynomial<Element> systematic_encode(const Polynomial<Element>& message, const string& output_path) const;
+    Polynomial<Element> nonsystematic_encode(const Polynomial<Element>& message, const string& output_path) const;
+
+    public:
+    Polynomial<Element> add_error(const Polynomial<Element>& codeword, const Polynomial<Element>& error, const string& output_path) const;
+
+    public:
+    Polynomial<Element> pgz_decode(const Polynomial<Element>& received, const string& output_path) const;
+    Polynomial<Element> bm_decode(const Polynomial<Element>& received, const string& output_path) const;
+    Polynomial<Element> euclidean_decode(const Polynomial<Element>& received, const string& output_path) const;
 
     public:
     vector<Element> syndrome(const Polynomial<Element>& received) const;
-    Polynomial<Element> syndrome(const vector<Element>& syndrome);
-    Polynomial<Element> pgz_error_locator(const vector<Element>& syndrome);
-    Polynomial<Element> pgz_error_evaluator(const Polynomial<Element>& syndrome, const Polynomial<Element>& error_locator);
-    vector<Element> chien_roots(const Polynomial<Element>& error_locator);
-    vector<Element> pgz_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots);
-    Polynomial<Element> estimated_error(const vector<Element>& roots, const vector<Element>& error_values);
-    Polynomial<Element> estimated_codeword(const Polynomial<Element>& received, const Polynomial<Element>& estimated_error);
-    Polynomial<Element> estimated_message(const Polynomial<Element>& estimated_codeword);
-    
-    public:
-    Polynomial<Element> pgz_decode(const Polynomial<Element>& received) const;
+    Polynomial<Element> syndrome(const vector<Element>& syndrome) const;
+
+    Polynomial<Element> pgz_error_locator(const vector<Element>& syndrome) const;
+    Polynomial<Element> bm_error_locator(const vector<Element>& syndrome) const;
+    Polynomial<Element> euclidean_error_locator(const Polynomial<Element>& syndrome) const;
+
+    Polynomial<Element> pgz_error_evaluator(const Polynomial<Element>& syndrome, const Polynomial<Element>& error_locator) const;
+    Polynomial<Element> bm_error_evaluator(const Polynomial<Element>& syndrome, const Polynomial<Element>& error_locator) const;
+    Polynomial<Element> euclidean_error_evaluator(const Polynomial<Element>& syndrome) const;
+
+    vector<Element> chien_roots(const Polynomial<Element>& error_locator) const;
+
+    vector<Element> pgz_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots) const;
+    vector<Element> bm_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots) const;
+    vector<Element> euclidean_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots) const;
+
+    Polynomial<Element> estimated_error(const vector<Element>& roots, const vector<Element>& error_values) const;
+    Polynomial<Element> estimated_codeword(const Polynomial<Element>& received, const Polynomial<Element>& estimated_error) const;
+    Polynomial<Element> estimated_message(const Polynomial<Element>& estimated_codeword) const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
