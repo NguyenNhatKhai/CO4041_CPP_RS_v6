@@ -21,7 +21,6 @@
 // #define ELE(i) FIE0.general_elements[i]
 
 // int main() {
-//     ofstream output_file("output.txt");
 //     try {
 //         Polynomial<Element> polMes(&FIE0, vector<Element>(RS0.message_length(), FIE0.zero_element()));
 //         Polynomial<Element> polErr(&FIE0, vector<Element>(RS0.codeword_length(), FIE0.zero_element()));
@@ -36,7 +35,6 @@
 //     } catch (const char* error_message) {
 //         cout << error_message << endl;
 //     }
-//     output_file.close();
 //     return 0;
 // }
 
@@ -54,7 +52,6 @@
 // #define ELE(i) FIE0.general_elements[i]
 
 // int main() {
-//     ofstream output_file("output.txt");
 //     try {
 //         Polynomial<Element> polMes(&FIE0, vector<Element>(RS0.message_length(), FIE0.zero_element()));
 //         Polynomial<Element> polErr(&FIE0, vector<Element>(RS0.codeword_length(), FIE0.zero_element()));
@@ -69,7 +66,6 @@
 //     } catch (const char* error_message) {
 //         cout << error_message << endl;
 //     }
-//     output_file.close();
 //     return 0;
 // }
 
@@ -118,7 +114,6 @@ RS RS0(&FIE0, INT0);
 #define ELE(i) FIE0.general_elements[i]
 
 int main() {
-    ofstream output_file("output.txt");
     try {
         Polynomial<Element> polMes(&FIE0, vector<Element>(RS0.message_length(), FIE0.zero_element()));
         Polynomial<Element> polErr(&FIE0, vector<Element>(RS0.codeword_length(), FIE0.zero_element()));
@@ -133,7 +128,6 @@ int main() {
     } catch (const char* error_message) {
         cout << error_message << endl;
     }
-    output_file.close();
     return 0;
 }
 

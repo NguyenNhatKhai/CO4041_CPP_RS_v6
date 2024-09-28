@@ -55,24 +55,29 @@ class RS {
     Polynomial<Element> bm_decode(const Polynomial<Element>& received, const string& output_path) const;
     Polynomial<Element> euclidean_decode(const Polynomial<Element>& received, const string& output_path) const;
 
-    public:
+    private:
     vector<Element> syndrome(const Polynomial<Element>& received) const;
     Polynomial<Element> syndrome(const vector<Element>& syndrome) const;
 
+    private:
     Polynomial<Element> pgz_error_locator(const vector<Element>& syndrome) const;
     Polynomial<Element> bm_error_locator(const vector<Element>& syndrome) const;
     Polynomial<Element> euclidean_error_locator(const Polynomial<Element>& syndrome) const;
 
+    private:
     Polynomial<Element> pgz_error_evaluator(const Polynomial<Element>& syndrome, const Polynomial<Element>& error_locator) const;
     Polynomial<Element> bm_error_evaluator(const Polynomial<Element>& syndrome, const Polynomial<Element>& error_locator) const;
     Polynomial<Element> euclidean_error_evaluator(const Polynomial<Element>& syndrome) const;
 
+    private:
     vector<Element> chien_roots(const Polynomial<Element>& error_locator) const;
 
+    private:
     vector<Element> pgz_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots) const;
     vector<Element> bm_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots) const;
     vector<Element> euclidean_error_values(const Polynomial<Element>& error_locator, const Polynomial<Element>& error_evaluator, const vector<Element>& roots) const;
 
+    private:
     Polynomial<Element> estimated_error(const vector<Element>& roots, const vector<Element>& error_values) const;
     Polynomial<Element> estimated_codeword(const Polynomial<Element>& received, const Polynomial<Element>& estimated_error) const;
     Polynomial<Element> estimated_message(const Polynomial<Element>& estimated_codeword) const;
